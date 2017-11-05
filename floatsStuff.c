@@ -227,10 +227,21 @@ char* get_flt_man_str(float f)
             the actual value of the mantissa is 0.9218750000
     The function should accept a float and return an int.
 */
-float get_flt_man_val()
+float get_flt_man_val(float f)
 {
-	float f = -1;
-	return f;
+	float out = 0;
+	int i;
+	int to_int = get_flt_bits_int(f);
+	float divider = 8388608;
+
+	for(i = 0; i < 23; i++)
+	{
+		if(to_int & 1) out += (1.0 / divider);
+		to_int = to_int >> 1;
+		divider /= 2;
+	}
+
+	return out;
 }
 
 
@@ -342,6 +353,9 @@ int main(){
 	int num = get_flt_exp_val(f);
 	printf("%d\n", num);
 	free(string);
+
+	float fl = get_flt_man_val(f);
+	printf("%f\n", fl);
 
     return 0;
 }
