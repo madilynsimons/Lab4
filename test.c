@@ -1,27 +1,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-char *int2bin(int a, char *buffer, int buf_size) {
-    buffer += (buf_size - 1);
+int theSame()
+{
+	// if all 1s, specialized
+	// if all 0s, denormalized
+	// else normalized
 
-    for (int i = 31; i >= 0; i--) {
-        *buffer-- = (a & 1) + '0';
+	int i = 0;
+	int next = 1;
 
-        a >>= 1;
-    }
+	char string[] = "hhhhhhhhhh";
+	char string2[] = "hhhhhh2";
+	char string3[] = "kshdfkjhsdj";
 
-    return buffer;
+	// check to see if they're all the same
+
+	while(string[next] == string[i] & string[next] != '\0')
+	{
+		next++;
+		i++;
+	}
+	if(string[i] == 'h') return 1;
+
+	return 0;
 }
 
-#define BUF_SIZE 33
-
 int main() {
-    char buffer[BUF_SIZE];
-    buffer[BUF_SIZE - 1] = '\0';
-
-    int num = 22;
-
-    int2bin(num, buffer, BUF_SIZE - 1);
-
-    printf("a = %s", buffer);
+    if(theSame() == 1) printf("TRUE\n");
+    else printf("FALSE\n");
 }

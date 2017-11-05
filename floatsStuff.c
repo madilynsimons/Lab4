@@ -94,7 +94,7 @@ char* get_flt_exp_str(float f)
 {
 	int to_int = get_flt_bits_int(f);
 
-	char *exponent = (char*) malloc((32+1)*sizeof(char));
+	char *exponent = (char*) malloc((8+1)*sizeof(char));
 	int i;
 
 	to_int = to_int >> 23;
@@ -127,7 +127,7 @@ int get_flt_exp_val(float f)
 {
 	int to_int = get_flt_bits_int(f);
 
-	int exponent = -127;
+	int exponent = -1 * BIAS;
 	int i;
 	int multiplier = 1;
 
@@ -144,7 +144,6 @@ int get_flt_exp_val(float f)
 }
 
 
-
 /*
     Write a function to return an integer containing the
     mode of the exponent of a float.  You should call
@@ -157,9 +156,31 @@ int get_flt_exp_val(float f)
             the mode is NORM
     The function should accept a float and return an int.
 */
-int get_flt_exp_mode()
+int get_flt_exp_mode(float f)
 {
-	return -1;
+	// if all 1s, specialized
+	// if all 0s, denormalized
+	// else normalized
+
+	int to_int = get_flt_bits_int(f);
+	to_int = to_int >> 23;
+	int next = to_int >> 1;
+	int i = 0;
+
+	// check to see if they're all the same
+	while(next == to_int & i < 7)
+	{
+		to_int = to_int >> 1;
+		next = next >> 1;
+		i++;
+	}
+	if(i == 7)
+	{
+		if(to_int) return SPEC; // if theyre all ones
+		else return DNORM; // if theyres all zeroes
+	}
+
+	return NORM; // else
 }
 
 
@@ -175,10 +196,21 @@ int get_flt_exp_mode()
             the mantissa bits are "11101100000000000000000"
     The function should accept a float and return a string.
 */
-char* get_flt_man_str()
+char* get_flt_man_str(float f)
 {
-	char a = 'a';
-	return &a;
+	int to_int = get_flt_bits_int(f);
+
+	char *mantissa = (char*) malloc((23+1)*sizeof(char));
+	int i;
+
+	for(i = 22; i >= 0; i--)
+	{
+		mantissa[i] = (to_int & 1) + '0';
+		to_int = to_int >> 1;
+	}
+	mantissa[23] = '\0';
+
+	return mantissa;
 }
 
 
@@ -297,7 +329,7 @@ int main(){
 
 
 	float f = -15.375;
-	char* string = get_flt_exp_str(f);
+	char* string = get_flt_man_str(f);
 	
 	int i = 0;
 	while(string[i] != '\0')
