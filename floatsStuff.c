@@ -97,7 +97,7 @@ char* get_flt_exp_str(float f)
 	char *exponent = (char*) malloc((32+1)*sizeof(char));
 	int i;
 
-	for(i = 0; i < 23; i++) to_int = to_int >> 1;
+	to_int = to_int >> 23;
 
 	for(i = 7; i >= 0; i--)
 	{
@@ -123,9 +123,24 @@ char* get_flt_exp_str(float f)
             the actual value of the exponent is 3
     The function should accept a float and return an int.
 */
-int get_flt_exp_val()
+int get_flt_exp_val(float f)
 {
-	return -1;
+	int to_int = get_flt_bits_int(f);
+
+	int exponent = -127;
+	int i;
+	int multiplier = 1;
+
+	to_int = to_int >> 23;
+
+	for(i = 0; i < 8; i++)
+	{
+		exponent += (to_int & 1) * multiplier;
+		to_int = to_int >> 1;
+		multiplier *= 2;
+	}
+
+	return exponent;
 }
 
 
@@ -291,6 +306,9 @@ int main(){
 		i++;
 	}
 	printf("\n");
+
+	int num = get_flt_exp_val(f);
+	printf("%d\n", num);
 	free(string);
 
     return 0;
