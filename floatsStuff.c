@@ -263,10 +263,38 @@ float get_flt_man_val(float f)
                 separate the 3 parts.
     The function should accept a float and return a string.
 */
-char* get_flt_bits_str()
+char* get_flt_bits_str(float f)
 {
-	char a = 'a';
-	return &a;
+	char *binary = (char*) malloc((32+2+1)*sizeof(char));
+
+	char  sig = get_flt_sign_char(f);
+	char *exp = get_flt_exp_str(f);
+	char *man = get_flt_man_str(f);
+
+	int bin_it = 0;
+	binary[bin_it++] = sig;
+	binary[bin_it++] = ' ';
+
+	int i;
+	for(i = 0; exp[i] != '\0'; i++)
+	{
+		binary[bin_it++] = exp[i];
+	}
+
+	binary[bin_it++] = ' ';
+
+	for(i = 0; man[i] != '\0'; i++)
+	{
+		binary[bin_it++] = man[i];
+	}
+
+	binary[bin_it] = '\0';
+
+	free(exp);
+	free(man);
+
+	return binary;
+
 }
 
 
@@ -340,22 +368,14 @@ int main(){
 
 
 	float f = -15.375;
-	char* string = get_flt_man_str(f);
-	
-	int i = 0;
-	while(string[i] != '\0')
+	char* string = get_flt_bits_str(f);
+
+	int i;
+	for(i = 0; string[i] != '\0'; i++)
 	{
 		printf("%c", string[i]);
-		i++;
 	}
 	printf("\n");
-
-	int num = get_flt_exp_val(f);
-	printf("%d\n", num);
 	free(string);
-
-	float fl = get_flt_man_val(f);
-	printf("%f\n", fl);
-
     return 0;
 }
