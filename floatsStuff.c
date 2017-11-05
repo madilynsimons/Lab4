@@ -96,12 +96,15 @@ char* get_flt_exp_str(float f)
 
 	char *exponent = (char*) malloc((32+1)*sizeof(char));
 	int i;
-	for(i = 0; i < 32; i++)
+
+	for(i = 0; i < 23; i++) to_int = to_int >> 1;
+
+	for(i = 7; i >= 0; i--)
 	{
 		exponent[i] = (to_int & 1) + '0';
 		to_int = to_int >> 1;
 	}
-	exponent[i] = '\0';
+	exponent[8] = '\0';
 
 	return exponent;
 }
