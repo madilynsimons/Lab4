@@ -29,7 +29,7 @@
 
 typedef struct{
    int sign;
-   int exponenet;
+   int exponent;
    float mantissa;
    int mode;
 } flt;
@@ -60,7 +60,7 @@ int get_flt_bits_int(float f)
 char get_flt_sign_char(float f)
 {
 	int to_int = get_flt_bits_int(f);
-	if(to_int < 0) return '1';
+	if(to_int & INT_MIN) return '1';
 	else return '0';
 }
 
@@ -74,7 +74,7 @@ char get_flt_sign_char(float f)
 int get_flt_sign_val(float f)
 {
 	int to_int = get_flt_bits_int(f);
-	if(to_int < 0) return -1;
+	if(to_int & INT_MIN) return -1;
 	else return 1;
 }
 
@@ -307,10 +307,14 @@ char* get_flt_bits_str(float f)
     Hint:  make sure to set exponent to -126 for
     DNORM mode.
 */
-flt get_flt_val_flt()
+flt get_flt_val_flt(float f)
 {
-	flt f;
-	return f;
+	flt f_struct;
+	f_struct.sign = get_flt_sign_val(f);
+    f_struct.exponent = get_flt_exp_val(f);
+    f_struct.mantissa = get_flt_man_val(f);
+    f_struct.mode = get_flt_exp_mode(f);
+	return f_struct;
 }
 
 
@@ -320,8 +324,23 @@ flt get_flt_val_flt()
     It should accept a flt struct and return nothing.
     Hint: Use if statement to print mode.
 */
-void print_flt(float f)
+void print_flt(flt f)
 {
+	printf("sign = %d\n", f.sign);
+	printf("exp = %d\n", f.exponent);
+	printf("man = %d\n", f.mantissa);
+	printf("mode = ");
+	switch(f.mode){
+		case NORM:
+			printf("normalized\n");
+		break;
+		case DNORM:
+			printf("denormalized\n");
+		break;
+		case SPEC:
+			printf("specialized\n");
+		break;
+	}
 	return;
 }
 
