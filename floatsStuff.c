@@ -359,6 +359,7 @@ void print_flt(flt f)
 float get_flt_bits_val(flt f)
 {
 	float flo = -1;
+
 	return flo;
 }
 
@@ -387,14 +388,37 @@ int main(){
 
 
 	float f = -15.375;
-	char* string = get_flt_bits_str(f);
 
-	int i;
-	for(i = 0; string[i] != '\0'; i++)
-	{
-		printf("%c", string[i]);
-	}
-	printf("\n");
-	free(string);
+	printf("f = %f\n\n", f);
+
+	char sig = get_flt_sign_char(f);
+	int s = get_flt_sign_val(f);
+
+	printf("sig = %c\n", sig);
+	printf("s = %d\n\n", s);
+
+	char* exp = get_flt_exp_str(f);
+	int e = get_flt_exp_val(f);
+
+	printf("exp = %s\n", exp);
+	printf("e = %d\n\n", e);
+	free(exp);
+
+	char* man = get_flt_man_str(f);
+	float m = get_flt_man_val(f);
+
+	printf("man = %s\n", man);
+	printf("m = %f\n\n", m);
+	free(man);
+
+	char* bits = get_flt_bits_str(f);
+
+	printf("bits = %s\n\n", bits);
+	free(bits);
+
+	flt f_struct = get_flt_val_flt(f);
+	print_flt(f_struct);
+
+	//float ff = get_flt_bits_val(f);
     return 0;
 }
