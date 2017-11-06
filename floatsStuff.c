@@ -328,7 +328,7 @@ void print_flt(flt f)
 {
 	printf("sign = %d\n", f.sign);
 	printf("exp = %d\n", f.exponent);
-	printf("man = %d\n", f.mantissa);
+	printf("man = %f\n", f.mantissa);
 	printf("mode = ");
 	switch(f.mode){
 		case NORM:
@@ -356,11 +356,28 @@ void print_flt(flt f)
         Check the slides and text for conditions for NORN, DNORM and SPEC
         You need to return (sign) * M * 2^e
 */
-float get_flt_bits_val(flt f)
+float get_flt_bits_val(flt f_struct)
 {
-	float flo = -1;
+	float f;
+	int sign = f_struct.sign;
+	int exponent = f_struct.exponent;
+	float mantissa = f_struct.mantissa;
 
-	return flo;
+	switch(f_struct.mode)
+	{
+		// TODO
+		case SPEC:
+		// infinity or not a number
+		break;
+		case DNORM:
+		// 
+		break;
+		case NORM:
+			f = sign * (1+mantissa) * pow(2, exponent);
+		break;
+	}
+
+	return f;
 }
 
 
@@ -418,7 +435,9 @@ int main(){
 
 	flt f_struct = get_flt_val_flt(f);
 	print_flt(f_struct);
+	printf("\n");
 
-	//float ff = get_flt_bits_val(f);
+	float ff = get_flt_bits_val(f_struct);
+	printf("ff = %f\n", ff);
     return 0;
 }
