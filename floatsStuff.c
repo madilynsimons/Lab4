@@ -140,7 +140,8 @@ int get_flt_exp_val(float f)
 		multiplier *= 2;
 	}
 
-	return exponent;
+	if(exponent == 128) exponent = 255; // specialized
+	return exponent; // normalized or denormalized or zero
 }
 
 
@@ -157,30 +158,22 @@ int get_flt_exp_val(float f)
     The function should accept a float and return an int.
 */
 int get_flt_exp_mode(float f)
-{
-	// if all 1s, specialized
+{	// if all 1s, specialized
 	// if all 0s, denormalized
 	// else normalized
 
-	int to_int = get_flt_bits_int(f);
-	to_int = to_int >> 23;
-	int next = to_int >> 1;
-	int i = 0;
+	int exp = get_flt_exp_val(f);
 
-	// check to see if they're all the same
-	while(next == to_int & i < 7)
+	if(exp == -127)
 	{
-		to_int = to_int >> 1;
-		next = next >> 1;
-		i++;
-	}
-	if(i == 7)
+		if(f == 0) return SPEC;
+		return DNORM;
+	}else if(exp == 255)
 	{
-		if(to_int) return SPEC; // if theyre all ones
-		else return DNORM; // if theyres all zeroes
+		return SPEC;
+	}else{
+		return NORM;
 	}
-
-	return NORM; // else
 }
 
 
@@ -365,12 +358,34 @@ float get_flt_bits_val(flt f_struct)
 
 	switch(f_struct.mode)
 	{
-		// TODO
 		case SPEC:
-		// infinity or not a number
+		// infinity, negative infinity, zero, or not a number
+			if(exponent == -127)
+			{
+				if(sign) return -0.0;
+				else return 0.0;
+			}
+			if(mantissa == 0)
+			{
+				if(sign)
+				{
+					// negative infinity
+					return -1 * INFINITY;
+				}
+				else
+				{
+					// infinity
+					return INFINITY;
+				}
+			}else
+			{
+				if(sign) return (0.0/0.0); //-nan
+				return NAN; //nan
+			}
+
 		break;
 		case DNORM:
-		// 
+		    f = sign * mantissa * pow(2, exponent);
 		break;
 		case NORM:
 			f = sign * (1+mantissa) * pow(2, exponent);
@@ -404,7 +419,7 @@ float get_flt_bits_val(flt f_struct)
 int main(){
 
 
-	float f = -15.375;
+	float f = -15.375000;
 
 	printf("f = %f\n\n", f);
 
